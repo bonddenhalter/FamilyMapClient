@@ -1,4 +1,4 @@
-package com.bond.android.familymap;
+package com.bond.android.familymap.requests;
 
 /**
  * Created by bondd on 11/14/2017.

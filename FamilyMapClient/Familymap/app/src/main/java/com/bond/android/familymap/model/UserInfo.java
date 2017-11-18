@@ -1,4 +1,4 @@
-package com.bond.android.familymap;
+package com.bond.android.familymap.model;
 
 /**
  * Created by bondd on 11/14/2017.
@@ -9,6 +9,8 @@ public class UserInfo
     private String authToken;
     private String userName;
     private String personID;
+    private String firstName;
+    private String lastName;
 
     private static UserInfo instance = null;
 
@@ -18,7 +20,7 @@ public class UserInfo
 
     }
 
-    public UserInfo getInstance()
+    public static UserInfo getInstance()
     {
         if (instance == null)
             instance = new UserInfo();
@@ -48,5 +50,21 @@ public class UserInfo
 
     public void setPersonID(String personID) {
         this.personID = personID;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }
