@@ -296,8 +296,8 @@ public class LoginFragment extends Fragment
                     FamilyInfo familyInfo = FamilyInfo.getInstance();
                     userInfo.setFirstName(familyInfo.getFirstName(userID));
                     userInfo.setLastName(familyInfo.getLastName(userID));
-                    
-                    Toast.makeText(getActivity(), (userInfo.getFirstName() + ", " + userInfo.getLastName()),
+
+                    Toast.makeText(getActivity(), (userInfo.getFirstName() + " " + userInfo.getLastName()),
                             Toast.LENGTH_SHORT).show();
                 }
             }
@@ -362,7 +362,7 @@ public class LoginFragment extends Fragment
                 else //total success
                 {
                     Log.i("Register request", "successful");
-                    Toast.makeText(getActivity(), (userInfo.getFirstName() + ", " + userInfo.getLastName()),
+                    Toast.makeText(getActivity(), (userInfo.getFirstName() + " " + userInfo.getLastName()),
                             Toast.LENGTH_SHORT).show();
                 }
 
