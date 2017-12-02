@@ -299,10 +299,19 @@ public class LoginFragment extends Fragment
 
                     Toast.makeText(getActivity(), (userInfo.getFirstName() + " " + userInfo.getLastName()),
                             Toast.LENGTH_SHORT).show();
+
+                    //switch to map activity
+                    switchToMapActivity();
                 }
             }
 
         }
+    }
+
+    private void switchToMapActivity()
+    {
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.switchToMapFragment();
     }
 
     private class RegisterRequestTask extends AsyncTask<RegisterRequest, Void, LoginResult>{  //todo: implement like login
@@ -364,6 +373,9 @@ public class LoginFragment extends Fragment
                     Log.i("Register request", "successful");
                     Toast.makeText(getActivity(), (userInfo.getFirstName() + " " + userInfo.getLastName()),
                             Toast.LENGTH_SHORT).show();
+
+                    //switch to map activity
+                    switchToMapActivity();
                 }
 
             }

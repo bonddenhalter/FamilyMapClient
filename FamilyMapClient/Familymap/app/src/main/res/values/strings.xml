@@ -12,4 +12,6 @@
     <string name="gender_female">Female</string>
     <string name="sign_in_button_label">SIGN IN</string>
     <string name="register_button_label">REGISTER</string>
+    <string name="title_activity_map">Map</string>
+    <string name="map_text_default">Click on a marker\nto see event details</string>
 </resources>

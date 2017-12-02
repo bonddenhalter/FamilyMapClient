@@ -29,8 +29,8 @@ class Client {
     //if auth is true, it will send the auth token
     String get(String url, boolean auth) throws Exception {
 
-        System.out.println("CLIENT: GET: " + url);
-        System.out.println();
+       // // System.out.println("CLIENT: GET: " + url);
+        // System.out.println();
 
         HttpURLConnection connection =
                 (HttpURLConnection) new URL(url).openConnection();
@@ -54,8 +54,8 @@ class Client {
     //return response body
     String post(String url, String request, boolean auth) throws Exception {
 
-        System.out.println("CLIENT: POST: " + url);
-        System.out.println();
+       // // System.out.println("CLIENT: POST: " + url);
+       // // System.out.println();
 
         HttpURLConnection connection =
                 (HttpURLConnection) new URL(url).openConnection();
@@ -91,7 +91,7 @@ class Client {
             }
             String respBody = sb.toString();
 
-            Log.i("server response msg", respBody);
+            //Log.i("server response msg", respBody);
             return respBody;
         }
 
@@ -105,23 +105,23 @@ class Client {
         out.print(request);
         out.close();
 
-        System.out.println("request body:");
-        System.out.println(request);
-        System.out.println();
+        // System.out.println("request body:");
+        // System.out.println(request);
+        // System.out.println();
 
     }
 
     void getResponseHeaders(HttpURLConnection connection) throws Exception {
 
-        System.out.println("response:");
+        // System.out.println("response:");
 
         int status = connection.getResponseCode();
-        System.out.println("status: " + status);
+        // System.out.println("status: " + status);
 
         String message = connection.getResponseMessage();
-        System.out.println("message: " + message);
+        // System.out.println("message: " + message);
 
-        System.out.println();
+        // System.out.println();
 
         //printHeaders(connection.getHeaderFields());
 
@@ -131,7 +131,7 @@ class Client {
 
         String response = "";
 
-        System.out.println("response body:");
+        // System.out.println("response body:");
 
         int status = connection.getResponseCode();
         if (status == HTTP_OK) {
@@ -140,13 +140,13 @@ class Client {
             while (in.hasNextLine()) {
                 String line = in.nextLine();
                 response += line + "\n";
-                System.out.println(line);
+                // System.out.println(line);
             }
             in.close();
 
         }
 
-        System.out.println();
+        // System.out.println();
 
         return response;
 
@@ -154,12 +154,12 @@ class Client {
 
     void printHeaders(Map<String, List<String>> headers) {
 
-        System.out.println("response headers:");
+         System.out.println("response headers:");
 
         for (String name : headers.keySet())
-            System.out.println(name + " = " + headers.get(name));
+             System.out.println(name + " = " + headers.get(name));
 
-        System.out.println();
+         System.out.println();
 
     }
 

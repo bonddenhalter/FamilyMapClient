@@ -49,9 +49,9 @@ public class Proxy
         String loginPath = "/user/login";
         try {
             String url = "http://" + client.getHostName() + ":" + client.getHostPort() + loginPath;
-            Log.i("URL is: ", url);
+           // Log.i("URL is: ", url);
             String responseJson = client.post(url, reqJson, false);
-            Log.i("JSON response", responseJson);
+            //Log.i("JSON response", responseJson);
             LoginResult result = encoder.decodeLoginResult(responseJson);
             return result;
         }
@@ -67,9 +67,9 @@ public class Proxy
         String eventsPath = "/event";
         try {
             String url = "http://" + client.getHostName() + ":" + client.getHostPort() + eventsPath;
-            Log.i("URL is: ", url);
+           // Log.i("URL is: ", url);
             String responseJson = client.get(url, true);
-            Log.i("JSON response", responseJson);
+           // Log.i("JSON response", responseJson);
             EventsResult result = encoder.decodeEventsResult(responseJson);
             return result;
         }
@@ -85,9 +85,9 @@ public class Proxy
         String peoplePath = "/person";
         try {
             String url = "http://" + client.getHostName() + ":" + client.getHostPort() + peoplePath;
-            Log.i("URL is: ", url);
+          //  Log.i("URL is: ", url);
             String responseJson = client.get(url, true);
-            Log.i("JSON response", responseJson);
+          //  Log.i("JSON response", responseJson);
             PeopleResult result = encoder.decodePeopleResult(responseJson);
             return result;
         }
@@ -112,9 +112,9 @@ public class Proxy
         String regPath = "/user/register";
         try {
             String url = "http://" + client.getHostName() + ":" + client.getHostPort() + regPath;
-            Log.i("URL is: ", url);
+          //  Log.i("URL is: ", url);
             String responseJson = client.post(url, reqJson, false);
-            Log.i("JSON response", responseJson);
+          //  Log.i("JSON response", responseJson);
             LoginResult result = encoder.decodeLoginResult(responseJson); //login result is identical to registerResult
             return result;
         }
