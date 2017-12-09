@@ -1,16 +1,26 @@
 package com.bond.android.familymap;
 
+import android.content.ClipData;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bond.android.familymap.model.Event;
 import com.bond.android.familymap.model.FamilyInfo;
+import com.bond.android.familymap.model.Person;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,6 +31,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.joanzapata.iconify.IconDrawable;
+import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 
 import static android.graphics.Color.BLACK;
 import static com.bond.android.familymap.R.color.BLUE;
@@ -39,12 +51,15 @@ public class MapFragment extends Fragment {
 
     GoogleMap mGoogleMap;
     MapView mMapView;
-
+    TextView mTextView;
+    boolean mMarkerClicked;
+    String personSelectedID;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -62,9 +77,74 @@ public class MapFragment extends Fragment {
             }
         });
 
+        mTextView = (TextView) v.findViewById(R.id.mapMarkerInfo);
+        mTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMarkerClicked) { //if the text view is pressed and a marker has been selected, open the person activity for that person
+                    Intent intent = new Intent(getActivity(), PersonActivity.class);
+                    intent.putExtra("personID", personSelectedID);
+                    startActivity(intent);
+                }
+            }
+        });
+
+
+        mMarkerClicked = false;
+
         return v;
+
+
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.activity_main, menu);
+
+        //set settings icon
+        Drawable settingsIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_gear).colorRes(R.color.WHITE).sizeDp(25);
+        MenuItem settingsItem = menu.findItem(R.id.settings_menu_icon);
+        settingsItem.setIcon(settingsIcon);
+
+        //set filter icon
+        Drawable filterIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_filter).colorRes(R.color.WHITE).sizeDp(25);
+        MenuItem filterItem = menu.findItem(R.id.filter_menu_icon);
+        filterItem.setIcon(filterIcon);
+
+        //set search icon
+        Drawable searchIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_search).colorRes(R.color.WHITE).sizeDp(25);
+        MenuItem searchItem = menu.findItem(R.id.search_menu_icon);
+        searchItem.setIcon(searchIcon);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.settings_menu_icon:
+                //Toast.makeText(getActivity(), "Settings", Toast.LENGTH_SHORT).show();
+                intent = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(intent);
+                return true;    // return true when handled successfully
+            case R.id.filter_menu_icon:
+                //Toast.makeText(getActivity(), "Filter", Toast.LENGTH_SHORT).show();
+                intent = new Intent(getActivity(), FilterActivity.class);
+                startActivity(intent);
+                return true;    // return true when handled successfully
+            case R.id.search_menu_icon:
+              //  Toast.makeText(getActivity(), "Search", Toast.LENGTH_SHORT).show();
+                intent = new Intent(getActivity(), SearchActivity.class);
+                startActivity(intent);
+                return true;    // return true when handled successfully
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+
+    ///HELPER FUNCTIONS
     void initMap()
     {
         LatLng centerInit = new LatLng(0, 0);
@@ -75,6 +155,38 @@ public class MapFragment extends Fragment {
         mGoogleMap.moveCamera(update);
 
         drawAllMarkers();
+
+        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                //Log.e("map", "marker clicked");
+                Event e = (Event) marker.getTag();
+                if (e == null)
+                    Log.e("Marker event", "event is NULL");
+                FamilyInfo familyInfo = FamilyInfo.getInstance();
+                Person p = familyInfo.getPersonFromEvent(e);
+                if (p == null)
+                    Log.e("Marker event", "Person is NULL");
+                personSelectedID = p.getPersonID();
+
+                String fullName = p.getFirstName() + " " + p.getLastName();
+                String eventLabel = e.getEventType() + ": " + e.getCity() + ", " + e.getCountry() + " (" + e.getYear() + ")";
+                mTextView.setText(fullName + "\n" + eventLabel);
+
+                Drawable genderIcon;
+                if (p.getGender().toLowerCase().equals("male"))
+                    genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_male).
+                        colorRes(R.color.BLUE).sizeDp(40);
+                else
+                    genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_female).
+                            colorRes(R.color.PINK).sizeDp(40);
+                mTextView.setCompoundDrawablesWithIntrinsicBounds(genderIcon, null, null, null);
+
+                mMarkerClicked = true;
+
+                return false;
+            }
+        });
 
     }
 

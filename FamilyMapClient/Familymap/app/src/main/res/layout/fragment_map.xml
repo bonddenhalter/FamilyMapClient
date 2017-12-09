@@ -25,12 +25,14 @@
         </com.google.android.gms.maps.MapView>
 
         <TextView
+            android:id="@+id/mapMarkerInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:text="@string/map_text_default"
             android:drawableLeft="@mipmap/ic_launcher"
-            android:drawablePadding="2dp"/>
+            android:drawablePadding="4dp"
+            android:padding="4dp"/>
 
     </LinearLayout>
 

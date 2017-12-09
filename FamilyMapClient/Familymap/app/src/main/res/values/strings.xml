@@ -14,4 +14,8 @@
     <string name="register_button_label">REGISTER</string>
     <string name="title_activity_map">Map</string>
     <string name="map_text_default">Click on a marker\nto see event details</string>
+    <string name="PA_first_name_label">First Name</string>
+    <string name="PA_last_name_label">Last Name</string>
+    <string name="PA_gender_label">Gender</string>
+
 </resources>
