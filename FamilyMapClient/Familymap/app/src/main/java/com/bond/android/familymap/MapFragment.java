@@ -2,12 +2,14 @@ package com.bond.android.familymap;
 
 import android.content.ClipData;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 import com.bond.android.familymap.model.Event;
 import com.bond.android.familymap.model.FamilyInfo;
 import com.bond.android.familymap.model.Person;
+import com.bond.android.familymap.model.Settings;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -31,16 +34,32 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static android.graphics.Color.BLACK;
 import static com.bond.android.familymap.R.color.BLUE;
 import static com.bond.android.familymap.R.color.GREEN;
 import static com.bond.android.familymap.R.color.RED;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_AZURE;
+import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_BLUE;
+import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_CYAN;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_GREEN;
+import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_MAGENTA;
+import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_ORANGE;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_RED;
+import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_ROSE;
+import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_VIOLET;
+import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_YELLOW;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.defaultMarker;
 
 /**
@@ -49,12 +68,15 @@ import static com.google.android.gms.maps.model.BitmapDescriptorFactory.defaultM
 
 public class MapFragment extends Fragment {
 
-    GoogleMap mGoogleMap;
-    MapView mMapView;
-    TextView mTextView;
-    boolean mMarkerClicked;
-    String personSelectedID;
+    private GoogleMap mGoogleMap;
+    private MapView mMapView;
+    private TextView mTextView;
+    private boolean mMarkerClicked;
+    private String personSelectedID;
+    private String eventID;
 
+    private Float[] colorChoices = {HUE_GREEN, HUE_RED, HUE_AZURE, HUE_ORANGE, HUE_YELLOW, HUE_CYAN, HUE_MAGENTA, HUE_VIOLET,
+            HUE_ROSE, HUE_BLUE};
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,8 +84,15 @@ public class MapFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+
+
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (getArguments() != null)
+            eventID = getArguments().getString("eventID");
+
         final View v = inflater.inflate(R.layout.fragment_map, container, false);
+
+        Settings settings = Settings.getInstance(); //initialize settings
 
         mMapView = (MapView) v.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
@@ -78,6 +107,34 @@ public class MapFragment extends Fragment {
         });
 
         mTextView = (TextView) v.findViewById(R.id.mapMarkerInfo);
+
+        erasePolyLines(settings.getLifelines());
+        if (eventID != null) //if we are focused on one event, show their info on bottom
+        {
+            FamilyInfo familyInfo = FamilyInfo.getInstance();
+            Event e = familyInfo.getEvent(eventID);
+            Person p = familyInfo.getPersonFromEvent(e);
+            personSelectedID = p.getPersonID();
+
+            String fullName = p.getFirstName() + " " + p.getLastName();
+            String eventLabel = e.getEventType() + ": " + e.getCity() + ", " + e.getCountry() + " (" + e.getYear() + ")";
+            mTextView.setText(fullName + "\n" + eventLabel);
+
+            Drawable genderIcon;
+            if (p.getGender().toLowerCase().equals("male") || p.getGender().toLowerCase().equals("m"))
+                genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_male).
+                        colorRes(R.color.BLUE).sizeDp(40);
+            else
+                genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_female).
+                        colorRes(R.color.PINK).sizeDp(40);
+            mTextView.setCompoundDrawablesWithIntrinsicBounds(genderIcon, null, null, null);
+
+            mMarkerClicked = true;
+
+        }
+        else
+            mMarkerClicked = false;
+
         mTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,33 +146,37 @@ public class MapFragment extends Fragment {
             }
         });
 
+        //draw life story lines if enabled
 
-        mMarkerClicked = false;
+
 
         return v;
 
 
     }
 
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.activity_main, menu);
+        if (eventID == null) { //if part of the main activity
+            inflater.inflate(R.menu.activity_main, menu);
 
-        //set settings icon
-        Drawable settingsIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_gear).colorRes(R.color.WHITE).sizeDp(25);
-        MenuItem settingsItem = menu.findItem(R.id.settings_menu_icon);
-        settingsItem.setIcon(settingsIcon);
+            //set settings icon
+            Drawable settingsIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_gear).colorRes(R.color.WHITE).sizeDp(25);
+            MenuItem settingsItem = menu.findItem(R.id.settings_menu_icon);
+            settingsItem.setIcon(settingsIcon);
 
-        //set filter icon
-        Drawable filterIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_filter).colorRes(R.color.WHITE).sizeDp(25);
-        MenuItem filterItem = menu.findItem(R.id.filter_menu_icon);
-        filterItem.setIcon(filterIcon);
+            //set filter icon
+            Drawable filterIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_filter).colorRes(R.color.WHITE).sizeDp(25);
+            MenuItem filterItem = menu.findItem(R.id.filter_menu_icon);
+            filterItem.setIcon(filterIcon);
 
-        //set search icon
-        Drawable searchIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_search).colorRes(R.color.WHITE).sizeDp(25);
-        MenuItem searchItem = menu.findItem(R.id.search_menu_icon);
-        searchItem.setIcon(searchIcon);
+            //set search icon
+            Drawable searchIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_search).colorRes(R.color.WHITE).sizeDp(25);
+            MenuItem searchItem = menu.findItem(R.id.search_menu_icon);
+            searchItem.setIcon(searchIcon);
+        }
     }
 
     @Override
@@ -151,11 +212,24 @@ public class MapFragment extends Fragment {
         CameraUpdate update = CameraUpdateFactory.newLatLng(centerInit);
         mGoogleMap.moveCamera(update);
 
-        update = CameraUpdateFactory.zoomTo(0);
-        mGoogleMap.moveCamera(update);
+        if (eventID == null) {
+            update = CameraUpdateFactory.zoomTo(0);
+            mGoogleMap.moveCamera(update);
+        }
+        else //zoom in on a specific event
+        {
+            update = CameraUpdateFactory.zoomTo(6);
+            mGoogleMap.moveCamera(update);
+
+            FamilyInfo familyInfo = FamilyInfo.getInstance();
+            LatLng eventLocation = familyInfo.getEventLocation(eventID);
+            update = CameraUpdateFactory.newLatLng(eventLocation);
+            mGoogleMap.moveCamera(update);
+        }
 
         drawAllMarkers();
 
+        //when a marker is clicked
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -174,7 +248,7 @@ public class MapFragment extends Fragment {
                 mTextView.setText(fullName + "\n" + eventLabel);
 
                 Drawable genderIcon;
-                if (p.getGender().toLowerCase().equals("male"))
+                if (p.getGender().toLowerCase().equals("male") || p.getGender().toLowerCase().equals("m"))
                     genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_male).
                         colorRes(R.color.BLUE).sizeDp(40);
                 else
@@ -183,6 +257,14 @@ public class MapFragment extends Fragment {
                 mTextView.setCompoundDrawablesWithIntrinsicBounds(genderIcon, null, null, null);
 
                 mMarkerClicked = true;
+
+                Settings settings = Settings.getInstance();
+                settings.setLastEventSelected(e);
+
+                //draw the lines that are enabled
+                settings = Settings.getInstance();
+                if(settings.isShowLifeStoryLines())
+                    drawLifeStoryLines(e.getEventID(), settings.getLifeStoryLinesColor());
 
                 return false;
             }
@@ -203,38 +285,86 @@ public class MapFragment extends Fragment {
 
             Marker marker = mGoogleMap.addMarker(markerOptions);
             marker.setTag(e); //associate the event with the marker
+
+            if (e.getEventID().equals(eventID))
+            {
+                marker.showInfoWindow();
+            }
         }
     }
 
     //returns the appropriate color for the event marker
     float getMarkerColor(Event e)
     {
-        float markerColor;
-        switch(e.getEventType().toLowerCase())
+        Map<String, Float> eventColors = Settings.getEventColors();
+        if (!eventColors.containsKey(e.getEventType()))
         {
-            case "birth":
-                markerColor = HUE_GREEN;
-                break;
-            case "marriage":
-                markerColor = HUE_RED;
-                break;
-            case "death":
-                markerColor = HUE_AZURE;
-                break;
-            default:
-                markerColor = BLACK;
-                break;
+            int numColorsInMap = eventColors.size();
+            eventColors.put(e.getEventType(), colorChoices[numColorsInMap]);
         }
-        return markerColor;
+
+        return eventColors.get(e.getEventType());
     }
+
+    void drawLifeStoryLines(String eventID, int color)
+    {
+        Settings settings = Settings.getInstance();
+        erasePolyLines(settings.getLifelines()); //erase existing life story lines
+        //get all of the person's life events
+        FamilyInfo familyInfo = FamilyInfo.getInstance();
+        Event eventSelected = familyInfo.getEvent(eventID);
+        Person person = familyInfo.getPersonFromEvent(eventSelected);
+        Event[] events = familyInfo.getEventsOfPerson(person.getPersonID());
+        List<LatLng> eventLocations = new ArrayList<>();
+        for (Event e : events)
+        {
+            eventLocations.add(new LatLng(Double.parseDouble(e.getLatitude()), Double.parseDouble(e.getLongitude())));
+        }
+        for (int i = 0; i < eventLocations.size() - 1; i++)
+        {
+            drawLine(eventLocations.get(i), eventLocations.get(i+1), 20, color, settings.getLifelines());
+        }
+    }
+
+    void drawLine(LatLng pos1, LatLng pos2, float width, int color, Set<Polyline> existingLines)
+    {
+        existingLines.add(mGoogleMap.addPolyline(new PolylineOptions()
+            .add(pos1, pos2)
+            .width(width)
+            .color(ContextCompat.getColor(getActivity(), color))));
+    }
+
+    void erasePolyLines(Set<Polyline> existingLines)
+    {
+        for (Polyline line : existingLines)
+        {
+            line.remove();
+        }
+        existingLines.clear();
+    }
+
 
     //Life Cycle Stuff
 
     @Override
     public void onResume() {
+        //draw the lines that are enabled
+        Settings settings = Settings.getInstance();
+        Event e = settings.getLastEventSelected();
+        if (e != null) {
+            eventID = e.getEventID();
+            if (settings.isShowLifeStoryLines())
+                drawLifeStoryLines(eventID, settings.getLifeStoryLinesColor());
+            else
+                erasePolyLines(settings.getLifelines());
+        }
         super.onResume();
         mMapView.onResume();
+
+
+
     }
+
 
     @Override
     public void onPause() {

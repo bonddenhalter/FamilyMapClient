@@ -34,4 +34,5 @@ dependencies {
     compile 'com.joanzapata.iconify:android-iconify-fontawesome:2.2.2'
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:recyclerview-v7:26.0.0-alpha1'
+//    implementation 'com.bignerdranch.android:expandablerecyclerview:3.0.0-RC1'
 }

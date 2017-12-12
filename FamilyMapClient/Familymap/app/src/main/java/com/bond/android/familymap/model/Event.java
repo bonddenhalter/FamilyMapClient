@@ -4,7 +4,7 @@ package com.bond.android.familymap.model;
  * Represents a row of the Events database table
  */
 
-public class Event {
+public class Event implements Comparable<Event>{
 
     private String eventID;
     private String descendant;
@@ -98,5 +98,13 @@ public class Event {
 
     public void setYear(String year) {
         this.year = year;
+    }
+
+    public int compareTo(Event compareEvent)
+    {
+        int compareYear = Integer.parseInt(compareEvent.getYear());
+        int thisEventYear = Integer.parseInt(year);
+
+        return thisEventYear - compareYear;
     }
 }

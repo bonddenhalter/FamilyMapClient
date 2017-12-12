@@ -3,8 +3,10 @@ package com.bond.android.familymap.model;
 import android.util.Log;
 
 import com.bond.android.familymap.results.EventsResult;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -103,27 +105,63 @@ public class FamilyInfo
 
     public Event[] getEventsOfPerson(String personID)
     {
-        Event[] orderedEvents = new Event[3];
+        ArrayList<Event> orderedEvents = new ArrayList<>();
         for (Event e : events)
         {
             if (e.getPerson().equals(personID))
             {
-                switch (e.getEventType().toLowerCase())
-                {
-                    case "birth":
-                        orderedEvents[0] = e;
-                        break;
-                    case "marriage":
-                        orderedEvents[1] = e;
-                        break;
-                    case "death":
-                        orderedEvents[2] = e;
-                        break;
-                    default:
-                        Log.e("EventType", "INVALID");
-                }
+                orderedEvents.add(e);
             }
         }
-        return orderedEvents;
+        Collections.sort(orderedEvents);
+        return  orderedEvents.toArray(new Event[0]);
     }
+
+    public Event getEvent(String eventID)
+    {
+        for (Event e : events)
+        {
+            if (e.getEventID().equals(eventID))
+                return e;
+        }
+        return null;
+    }
+
+    public LatLng getEventLocation(String eventID)
+    {
+        for (Event e : events)
+        {
+            if (e.getEventID().equals(eventID))
+            {
+                double lat = Double.parseDouble(e.getLatitude());
+                double lng = Double.parseDouble(e.getLongitude());
+                return new LatLng(lat, lng);
+            }
+        }
+        return null;
+    }
+
+    public List<Person> findChildren (String parentID)
+    {
+        List<Person> children = new ArrayList<>();
+        for (Person p : people)
+        {
+            if (p.getFather().equals(parentID) || p.getMother().equals(parentID)) //if this is a child
+            {
+                children.add(p);
+            }
+        }
+        return children;
+    }
+
+    public Person findSpouse(String spouseID)
+    {
+        for (Person p : people)
+        {
+            if (p.getSpouse().equals(spouseID))
+                return p;
+        }
+        return null;
+    }
+
 }

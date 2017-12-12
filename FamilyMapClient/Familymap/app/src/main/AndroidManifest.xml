@@ -40,11 +40,13 @@
 
         <activity
             android:name=".MapActivity"
-            android:label="@string/title_activity_map">
+            android:label="@string/title_activity_map"
+            android:parentActivityName=".MainActivity">
         </activity>
         <activity
             android:name=".PersonActivity"
-            android:label="Person Details">
+            android:label="Person Details"
+            android:parentActivityName=".MainActivity">
         </activity>
         <activity android:name=".SettingsActivity"
             android:label="Settings">
