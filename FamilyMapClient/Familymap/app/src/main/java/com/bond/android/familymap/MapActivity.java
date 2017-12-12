@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.bond.android.familymap.model.Settings;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,6 +31,8 @@ public class MapActivity extends AppCompatActivity {
 
         if (fragment == null)
         {
+            Settings settings = Settings.getInstance();
+            settings.setMapFragInMain(false);
             fragment = new MapFragment();
 
             //send event info

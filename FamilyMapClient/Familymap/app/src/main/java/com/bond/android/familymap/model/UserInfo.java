@@ -67,4 +67,14 @@ public class UserInfo
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+    public void logOut()
+    {
+        authToken = null;
+        userName = null;
+        personID = null;
+        firstName = null;
+        lastName = null;
+    }
+
 }

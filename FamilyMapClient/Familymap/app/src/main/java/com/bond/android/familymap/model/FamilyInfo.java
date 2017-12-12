@@ -164,4 +164,13 @@ public class FamilyInfo
         return null;
     }
 
+    public void wipeAllFamilyData()
+    {
+        events = null;
+        people = null;
+        eventsLoadSuccessful = false;
+        peopleLoadSuccessful = false;
+    }
+
+
 }

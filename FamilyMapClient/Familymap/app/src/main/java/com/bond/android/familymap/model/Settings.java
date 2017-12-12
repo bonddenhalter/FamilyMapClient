@@ -39,7 +39,14 @@ public class Settings {
 
     private static Map<String, Float> eventColors;
     private Set<Polyline> lifelines;
+    private Set<Polyline> familyTreeLines;
+    private Set<Polyline> spouseLines;
+
     private Event lastEventSelected; //updated when map fragment paused
+
+
+
+    private boolean mapFragInMain;
 
     private static Settings instance = null;
 
@@ -56,6 +63,10 @@ public class Settings {
 
         eventColors = new HashMap<>();
         lifelines = new HashSet<>();
+        familyTreeLines = new HashSet<>();
+        spouseLines = new HashSet<>();
+
+
     }
 
     public static Settings getInstance()
@@ -63,6 +74,22 @@ public class Settings {
         if (instance == null)
             instance = new Settings();
         return instance;
+    }
+
+    public Set<Polyline> getSpouseLines() {
+        return spouseLines;
+    }
+
+    public void setSpouseLines(Set<Polyline> spouseLines) {
+        this.spouseLines = spouseLines;
+    }
+
+    public boolean isMapFragInMain() {
+        return mapFragInMain;
+    }
+
+    public void setMapFragInMain(boolean mapFragInMain) {
+        this.mapFragInMain = mapFragInMain;
     }
 
     public Event getLastEventSelected() {
@@ -79,6 +106,14 @@ public class Settings {
 
     public void setLifelines(Set<Polyline> lifelines) {
         this.lifelines = lifelines;
+    }
+
+    public Set<Polyline> getFamilyTreeLines() {
+        return familyTreeLines;
+    }
+
+    public void setFamilyTreeLines(Set<Polyline> familyTreeLines) {
+        this.familyTreeLines = familyTreeLines;
     }
 
     public boolean isShowLifeStoryLines() {
@@ -200,6 +235,25 @@ public class Settings {
             default:
                 Log.e("map type", "invalid");
                 return "Normal";
+        }
+    }
+
+    public int getSpinnerPositionFromMapType(String mapType)
+    {
+        switch (mapType)
+        {
+            case "Normal":
+                return 0;
+            case "Hybrid":
+                return 1;
+            case "Satellite":
+                return 2;
+            case "Terrain":
+                return 3;
+            default:
+                Log.e("map type", "invalid");
+                return -1;
+
         }
     }
 

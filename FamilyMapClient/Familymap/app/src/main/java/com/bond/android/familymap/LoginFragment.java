@@ -384,10 +384,6 @@ public class LoginFragment extends Fragment
 
     void getFamilyInfo()
     {
-//        EventsRequestTask eventsRequestTask = new EventsRequestTask();
-//        eventsRequestTask.execute();
-//        PeopleRequestTask peopleRequestTask = new PeopleRequestTask();
-//        peopleRequestTask.execute();
         Proxy proxy = Proxy.getInstance();
         EventsResult eventsResult = proxy.events();
         FamilyInfo familyInfo = FamilyInfo.getInstance();
@@ -437,85 +433,83 @@ public class LoginFragment extends Fragment
             Log.e("people resp", "null data and msg");
             familyInfo.setPeopleLoadSuccessful(false);
         }
-
-
     }
 
-    private class EventsRequestTask extends AsyncTask<Void, Void, EventsResult> {
-        @Override
-        protected EventsResult doInBackground(Void... params) {
-            Proxy proxy = Proxy.getInstance();
-            EventsResult eventsResult = proxy.events();
-            return eventsResult;
-        }
-
-        @Override
-        protected void onPostExecute(EventsResult eventsResult) {
-            //super.onPostExecute(eventsResult);
-            //stash results
-            FamilyInfo familyInfo = FamilyInfo.getInstance();
-            if (eventsResult == null)
-            {
-                Log.e("events resp", "null data and msg");
-                familyInfo.setEventsLoadSuccessful(false);
-            }
-            else if (eventsResult.getData() != null)
-            {
-                familyInfo.setEvents(eventsResult.getData());
-                Log.i("Events request", "successful");
-                familyInfo.setEventsLoadSuccessful(true);
-            }
-            else if (eventsResult.getMessage() != null) //there was a failure in the server
-            {
-                Log.e("events error", eventsResult.getMessage());
-                familyInfo.setEventsLoadSuccessful(false);
-            }
-            else
-            {
-                Log.e("events resp", "null data and msg");
-                familyInfo.setEventsLoadSuccessful(false);
-            }
-        }
-    }
-
-    private class PeopleRequestTask extends AsyncTask<Void, Void, PeopleResult> {
-
-        @Override
-        protected PeopleResult doInBackground(Void... params) {
-            Proxy proxy = Proxy.getInstance();
-            return proxy.people();
-        }
-
-        @Override
-        protected void onPostExecute(PeopleResult peopleResult) {
-            //super.onPostExecute(peopleResult);
-            //stash data
-            FamilyInfo familyInfo = FamilyInfo.getInstance();
-            if (peopleResult == null)
-            {
-                Log.e("people resp", "null data and msg");
-                familyInfo.setPeopleLoadSuccessful(false);
-            }
-            else if (peopleResult.getData() != null)
-            {
-                familyInfo.setPeople(peopleResult.getData());
-//                Toast.makeText(getActivity(), "People succeeded!", //TODO:TEMP!
-//                        Toast.LENGTH_SHORT).show();
-                Log.i("People request", "successful");
-                familyInfo.setPeopleLoadSuccessful(true);
-            }
-            else if (peopleResult.getMessage() != null) //there was a failure in the server
-            {
-                Log.e("people error", peopleResult.getMessage());
-                familyInfo.setPeopleLoadSuccessful(false);
-            }
-            else
-            {
-                Log.e("people resp", "null data and msg");
-                familyInfo.setPeopleLoadSuccessful(false);
-            }
-
-        }
-    }
+//    private class EventsRequestTask extends AsyncTask<Void, Void, EventsResult> {
+//        @Override
+//        protected EventsResult doInBackground(Void... params) {
+//            Proxy proxy = Proxy.getInstance();
+//            EventsResult eventsResult = proxy.events();
+//            return eventsResult;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(EventsResult eventsResult) {
+//            //super.onPostExecute(eventsResult);
+//            //stash results
+//            FamilyInfo familyInfo = FamilyInfo.getInstance();
+//            if (eventsResult == null)
+//            {
+//                Log.e("events resp", "null data and msg");
+//                familyInfo.setEventsLoadSuccessful(false);
+//            }
+//            else if (eventsResult.getData() != null)
+//            {
+//                familyInfo.setEvents(eventsResult.getData());
+//                Log.i("Events request", "successful");
+//                familyInfo.setEventsLoadSuccessful(true);
+//            }
+//            else if (eventsResult.getMessage() != null) //there was a failure in the server
+//            {
+//                Log.e("events error", eventsResult.getMessage());
+//                familyInfo.setEventsLoadSuccessful(false);
+//            }
+//            else
+//            {
+//                Log.e("events resp", "null data and msg");
+//                familyInfo.setEventsLoadSuccessful(false);
+//            }
+//        }
+//    }
+//
+//    private class PeopleRequestTask extends AsyncTask<Void, Void, PeopleResult> {
+//
+//        @Override
+//        protected PeopleResult doInBackground(Void... params) {
+//            Proxy proxy = Proxy.getInstance();
+//            return proxy.people();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(PeopleResult peopleResult) {
+//            //super.onPostExecute(peopleResult);
+//            //stash data
+//            FamilyInfo familyInfo = FamilyInfo.getInstance();
+//            if (peopleResult == null)
+//            {
+//                Log.e("people resp", "null data and msg");
+//                familyInfo.setPeopleLoadSuccessful(false);
+//            }
+//            else if (peopleResult.getData() != null)
+//            {
+//                familyInfo.setPeople(peopleResult.getData());
+////                Toast.makeText(getActivity(), "People succeeded!", //TODO:TEMP!
+////                        Toast.LENGTH_SHORT).show();
+//                Log.i("People request", "successful");
+//                familyInfo.setPeopleLoadSuccessful(true);
+//            }
+//            else if (peopleResult.getMessage() != null) //there was a failure in the server
+//            {
+//                Log.e("people error", peopleResult.getMessage());
+//                familyInfo.setPeopleLoadSuccessful(false);
+//            }
+//            else
+//            {
+//                Log.e("people resp", "null data and msg");
+//                familyInfo.setPeopleLoadSuccessful(false);
+//            }
+//
+//        }
+//    }
 
 }

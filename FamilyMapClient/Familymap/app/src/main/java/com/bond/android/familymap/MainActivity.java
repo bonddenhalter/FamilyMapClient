@@ -36,8 +36,10 @@ public class MainActivity extends AppCompatActivity {
             Settings settings = Settings.getInstance();
             if (!settings.isMainLoadMapFragOnCreate())
                 fragment = new LoginFragment();
-            else
+            else {
+                settings.setMapFragInMain(true);
                 fragment = new MapFragment();
+            }
             fm.beginTransaction()
                     .add(R.id.main_frag_container, fragment)
                     .commit();
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     protected void switchToMapFragment()
     {
         Settings settings = Settings.getInstance();
+        settings.setMapFragInMain(true);
         settings.setMainLoadMapFragOnCreate(true);
         Fragment mapFrag = new MapFragment();
         FragmentManager fm = this.getSupportFragmentManager();

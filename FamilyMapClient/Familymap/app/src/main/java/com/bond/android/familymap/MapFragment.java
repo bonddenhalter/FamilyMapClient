@@ -61,6 +61,11 @@ import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_ROSE
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_VIOLET;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_YELLOW;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.defaultMarker;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_HYBRID;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_SATELLITE;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_TERRAIN;
+
 
 /**
  * Created by bondd on 12/1/2017.
@@ -113,21 +118,8 @@ public class MapFragment extends Fragment {
         {
             FamilyInfo familyInfo = FamilyInfo.getInstance();
             Event e = familyInfo.getEvent(eventID);
-            Person p = familyInfo.getPersonFromEvent(e);
-            personSelectedID = p.getPersonID();
 
-            String fullName = p.getFirstName() + " " + p.getLastName();
-            String eventLabel = e.getEventType() + ": " + e.getCity() + ", " + e.getCountry() + " (" + e.getYear() + ")";
-            mTextView.setText(fullName + "\n" + eventLabel);
-
-            Drawable genderIcon;
-            if (p.getGender().toLowerCase().equals("male") || p.getGender().toLowerCase().equals("m"))
-                genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_male).
-                        colorRes(R.color.BLUE).sizeDp(40);
-            else
-                genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_female).
-                        colorRes(R.color.PINK).sizeDp(40);
-            mTextView.setCompoundDrawablesWithIntrinsicBounds(genderIcon, null, null, null);
+            populateEventDisplay(e);
 
             mMarkerClicked = true;
 
@@ -146,20 +138,32 @@ public class MapFragment extends Fragment {
             }
         });
 
-        //draw life story lines if enabled
-
-
+//        if (mGoogleMap != null) {
+//            if (settings.isShowLifeStoryLines())
+//                drawLifeStoryLines(eventID, settings.getLifeStoryLinesColor());
+//            else
+//                erasePolyLines(settings.getLifelines());
+//
+//            if (settings.isShowFamilyTreeLines())
+//                drawFamilyTreeLines(eventID, settings.getFamilyTreeLinesColor());
+//            else
+//                erasePolyLines(settings.getFamilyTreeLines());
+//
+//            if (settings.isShowSpouseLines())
+//                drawSpouseLines(eventID, settings.getSpouseLinesColor());
+//        }
 
         return v;
-
-
     }
 
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        if (eventID == null) { //if part of the main activity
+        Settings settings = Settings.getInstance();
+
+        //if (eventID == null) { //if part of the main activity
+        if(settings.isMapFragInMain()) {
             inflater.inflate(R.menu.activity_main, menu);
 
             //set settings icon
@@ -211,8 +215,11 @@ public class MapFragment extends Fragment {
         LatLng centerInit = new LatLng(0, 0);
         CameraUpdate update = CameraUpdateFactory.newLatLng(centerInit);
         mGoogleMap.moveCamera(update);
+        Settings settings = Settings.getInstance();
 
-        if (eventID == null) {
+        mGoogleMap.setMapType(getMapType(settings.getMapType()));
+
+        if (settings.isMapFragInMain()) {
             update = CameraUpdateFactory.zoomTo(0);
             mGoogleMap.moveCamera(update);
         }
@@ -235,26 +242,7 @@ public class MapFragment extends Fragment {
             public boolean onMarkerClick(Marker marker) {
                 //Log.e("map", "marker clicked");
                 Event e = (Event) marker.getTag();
-                if (e == null)
-                    Log.e("Marker event", "event is NULL");
-                FamilyInfo familyInfo = FamilyInfo.getInstance();
-                Person p = familyInfo.getPersonFromEvent(e);
-                if (p == null)
-                    Log.e("Marker event", "Person is NULL");
-                personSelectedID = p.getPersonID();
-
-                String fullName = p.getFirstName() + " " + p.getLastName();
-                String eventLabel = e.getEventType() + ": " + e.getCity() + ", " + e.getCountry() + " (" + e.getYear() + ")";
-                mTextView.setText(fullName + "\n" + eventLabel);
-
-                Drawable genderIcon;
-                if (p.getGender().toLowerCase().equals("male") || p.getGender().toLowerCase().equals("m"))
-                    genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_male).
-                        colorRes(R.color.BLUE).sizeDp(40);
-                else
-                    genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_female).
-                            colorRes(R.color.PINK).sizeDp(40);
-                mTextView.setCompoundDrawablesWithIntrinsicBounds(genderIcon, null, null, null);
+                populateEventDisplay(e);
 
                 mMarkerClicked = true;
 
@@ -265,11 +253,71 @@ public class MapFragment extends Fragment {
                 settings = Settings.getInstance();
                 if(settings.isShowLifeStoryLines())
                     drawLifeStoryLines(e.getEventID(), settings.getLifeStoryLinesColor());
+                if(settings.isShowFamilyTreeLines())
+                    drawFamilyTreeLines(e.getEventID(), settings.getFamilyTreeLinesColor());
+                if (settings.isShowSpouseLines())
+                    drawSpouseLines(e.getEventID(), settings.getSpouseLinesColor());
 
                 return false;
             }
         });
 
+            if (settings.isShowLifeStoryLines())
+                drawLifeStoryLines(eventID, settings.getLifeStoryLinesColor());
+            else
+                erasePolyLines(settings.getLifelines());
+
+            if (settings.isShowFamilyTreeLines())
+                drawFamilyTreeLines(eventID, settings.getFamilyTreeLinesColor());
+            else
+                erasePolyLines(settings.getFamilyTreeLines());
+
+            if (settings.isShowSpouseLines())
+                drawSpouseLines(eventID, settings.getSpouseLinesColor());
+
+
+    }
+
+    int getMapType(String mapType)
+    {
+        switch(mapType)
+        {
+            case "Normal":
+                return MAP_TYPE_NORMAL;
+            case "Hybrid":
+                return MAP_TYPE_HYBRID;
+            case "Satellite":
+                return MAP_TYPE_SATELLITE;
+            case "Terrain":
+                return MAP_TYPE_TERRAIN;
+            default:
+                Log.e("map type", "invalid");
+                return -1;
+        }
+    }
+
+    void populateEventDisplay(Event e)
+    {
+        if (e == null)
+            Log.e("Marker event", "event is NULL");
+        FamilyInfo familyInfo = FamilyInfo.getInstance();
+        Person p = familyInfo.getPersonFromEvent(e);
+        if (p == null)
+            Log.e("Marker event", "Person is NULL");
+        personSelectedID = p.getPersonID();
+
+        String fullName = p.getFirstName() + " " + p.getLastName();
+        String eventLabel = e.getEventType() + ": " + e.getCity() + ", " + e.getCountry() + " (" + e.getYear() + ")";
+        mTextView.setText(fullName + "\n" + eventLabel);
+
+        Drawable genderIcon;
+        if (p.getGender().toLowerCase().equals("male") || p.getGender().toLowerCase().equals("m"))
+            genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_male).
+                    colorRes(R.color.BLUE).sizeDp(40);
+        else
+            genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_female).
+                    colorRes(R.color.PINK).sizeDp(40);
+        mTextView.setCompoundDrawablesWithIntrinsicBounds(genderIcon, null, null, null);
     }
 
     void drawAllMarkers()
@@ -326,6 +374,87 @@ public class MapFragment extends Fragment {
         }
     }
 
+    void drawFamilyTreeLines(String eventId, int color)
+    {
+        Settings settings = Settings.getInstance();
+        erasePolyLines(settings.getFamilyTreeLines()); //erase existing family tree lines
+        //get all of the person's life events
+        FamilyInfo familyInfo = FamilyInfo.getInstance();
+        Event eventSelected = familyInfo.getEvent(eventId);
+        Person person = familyInfo.getPersonFromEvent(eventSelected);
+        familyTreeRecurse(person, eventSelected, 20);
+        //selected event is first point
+        //find father's earliest event
+            //if not null, that's the secondpoint on father side
+            //recursively find his parents earliest events
+    }
+
+    void drawSpouseLines(String eventId, int color)
+    {
+        Settings settings = Settings.getInstance();
+        erasePolyLines(settings.getSpouseLines()); //erase existing spouse lines
+        //get earliest life event for spouse
+        FamilyInfo familyInfo = FamilyInfo.getInstance();
+        Event eventSelected = familyInfo.getEvent(eventId);
+        Person person = familyInfo.getPersonFromEvent(eventSelected);
+        if (person.getSpouse() != null && !person.getSpouse().equals(""))
+        {
+            Person spouse = familyInfo.getPersonFromID(person.getSpouse());
+            Event[] spouseEvents = familyInfo.getEventsOfPerson(spouse.getPersonID());
+            if (spouseEvents != null && spouseEvents[0] != null)
+            {
+                LatLng spouseLocation = new LatLng(Double.parseDouble(spouseEvents[0].getLatitude()), Double.parseDouble(spouseEvents[0].getLongitude()));
+                LatLng personLocation = new LatLng(Double.parseDouble(eventSelected.getLatitude()), Double.parseDouble(eventSelected.getLongitude()));
+                drawLine(personLocation, spouseLocation, 20, color, settings.getSpouseLines());
+            }
+        }
+    }
+
+
+    void familyTreeRecurse(Person curPerson, Event curEvent, int width)
+    {
+        LatLng curPosition = new LatLng(Double.parseDouble(curEvent.getLatitude()), Double.parseDouble(curEvent.getLongitude()));
+        Settings settings = Settings.getInstance();
+        int lineColor = settings.getFamilyTreeLinesColor();
+
+        FamilyInfo familyInfo = FamilyInfo.getInstance();
+
+        //find father
+        Person father = null;
+        if (curPerson.getFather() != null)
+            father = familyInfo.getPersonFromID(curPerson.getFather());
+        Event[] fatherEvents = null;
+        if (father != null)
+            fatherEvents = familyInfo.getEventsOfPerson(father.getPersonID());
+
+        if (fatherEvents != null && fatherEvents[0] != null) {
+            LatLng fatherPos = new LatLng(Double.parseDouble(fatherEvents[0].getLatitude()), Double.parseDouble(fatherEvents[0].getLongitude()));
+            drawLine(curPosition, fatherPos, width, lineColor, settings.getFamilyTreeLines()); //draw line connecting current person and their father
+        }
+
+        //find mother
+        Person mother = null;
+        if (curPerson.getMother() != null)
+            mother = familyInfo.getPersonFromID(curPerson.getMother());
+        Event[] motherEvents = null;
+        if (mother != null)
+            motherEvents = familyInfo.getEventsOfPerson(mother.getPersonID());
+
+        if (motherEvents != null && motherEvents[0] != null)
+        {
+            LatLng motherPos = new LatLng(Double.parseDouble(motherEvents[0].getLatitude()), Double.parseDouble(motherEvents[0].getLongitude()));
+            drawLine(curPosition, motherPos, width, lineColor, settings.getFamilyTreeLines()); //draw line connecting current person and their mother
+        }
+
+        //recurse for parents
+        int nextWidth = (width / 2 > 0) ? (width / 2) : 1;
+        if (father != null && fatherEvents != null && fatherEvents[0] != null)
+            familyTreeRecurse(father, fatherEvents[0], nextWidth);
+        if (mother != null && motherEvents != null && motherEvents[0] != null)
+            familyTreeRecurse(mother, motherEvents[0], nextWidth);
+    }
+
+
     void drawLine(LatLng pos1, LatLng pos2, float width, int color, Set<Polyline> existingLines)
     {
         existingLines.add(mGoogleMap.addPolyline(new PolylineOptions()
@@ -348,18 +477,51 @@ public class MapFragment extends Fragment {
 
     @Override
     public void onResume() {
-        //draw the lines that are enabled
-        Settings settings = Settings.getInstance();
-        Event e = settings.getLastEventSelected();
-        if (e != null) {
-            eventID = e.getEventID();
-            if (settings.isShowLifeStoryLines())
-                drawLifeStoryLines(eventID, settings.getLifeStoryLinesColor());
-            else
-                erasePolyLines(settings.getLifelines());
-        }
         super.onResume();
         mMapView.onResume();
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                mGoogleMap = googleMap;
+                initMap();
+            }
+        });
+        //draw the lines that are enabled
+        Settings settings = Settings.getInstance();
+        Event e = null;
+        if (settings.isMapFragInMain())
+            e = settings.getLastEventSelected();
+        if (e != null) {
+            populateEventDisplay(e);
+            mTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mMarkerClicked) { //if the text view is pressed and a marker has been selected, open the person activity for that person
+                        Intent intent = new Intent(getActivity(), PersonActivity.class);
+                        intent.putExtra("personID", personSelectedID);
+                        startActivity(intent);
+                    }
+                }
+            });
+            eventID = e.getEventID();
+            if (mGoogleMap != null) {
+                if (settings.isShowLifeStoryLines())
+                    drawLifeStoryLines(eventID, settings.getLifeStoryLinesColor());
+                else
+                    erasePolyLines(settings.getLifelines());
+
+                if (settings.isShowFamilyTreeLines())
+                    drawFamilyTreeLines(eventID, settings.getFamilyTreeLinesColor());
+                else
+                    erasePolyLines(settings.getFamilyTreeLines());
+
+                if (settings.isShowSpouseLines())
+                    drawSpouseLines(eventID, settings.getSpouseLinesColor());
+                else
+                    erasePolyLines(settings.getSpouseLines());
+            }
+        }
+
 
 
 

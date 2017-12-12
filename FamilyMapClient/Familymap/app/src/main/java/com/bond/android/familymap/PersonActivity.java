@@ -248,5 +248,4 @@ public class PersonActivity extends AppCompatActivity {
         return family;
     }
 
-
 }
