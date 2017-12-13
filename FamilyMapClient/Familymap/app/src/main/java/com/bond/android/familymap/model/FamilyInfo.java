@@ -23,14 +23,14 @@ public class FamilyInfo
     private boolean eventsLoadSuccessful = false;
     private boolean peopleLoadSuccessful = false;
 
-    private boolean baptismFilter = false;
-    private boolean birthFilter = false;
-    private boolean censusFilter = false;
-    private boolean christeningFilter = false;
-    private boolean deathFilter = false;
-    private boolean marriageFilter = false;
-    private boolean fatherFilter = false;
-    private boolean motherFilter = false;
+    private boolean baptismFilter = true;
+    private boolean birthFilter = true;
+    private boolean censusFilter = true;
+    private boolean christeningFilter = true;
+    private boolean deathFilter = true;
+    private boolean marriageFilter = true;
+    private boolean fatherFilter = true;
+    private boolean motherFilter = true;
     private boolean maleFilter = true;
     private boolean femaleFilter = true;
 
@@ -288,14 +288,27 @@ public class FamilyInfo
 
     public boolean isMaleEvent(Event e)
     {
-        String gender = getPersonFromID(e.getPerson()).getGender().toLowerCase();
-        return (gender.equals("male") || gender.equals("m"));
+        if (e != null) {
+            Person p = getPersonFromID(e.getPerson());
+            if (p != null)
+            {
+            String gender = p.getGender().toLowerCase();
+            return (gender.equals("male") || gender.equals("m"));
+            }
+        }
+        return false;
     }
 
     public boolean isFemaleEvent(Event e)
     {
-        String gender = getPersonFromID(e.getPerson()).getGender().toLowerCase();
-        return (gender.equals("female") || gender.equals("f"));
+        if (e != null) {
+            Person p = getPersonFromID(e.getPerson());
+            if (p != null) {
+                String gender = p.getGender().toLowerCase();
+                return (gender.equals("female") || gender.equals("f"));
+            }
+        }
+        return false;
     }
 
 
