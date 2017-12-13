@@ -103,13 +103,13 @@ public class MapFragment extends Fragment {
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
 
-        mMapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                mGoogleMap = googleMap;
-                initMap();
-            }
-        });
+//        mMapView.getMapAsync(new OnMapReadyCallback() {
+//            @Override
+//            public void onMapReady(GoogleMap googleMap) {
+//                mGoogleMap = googleMap;
+//                initMap();
+//            }
+//        });
 
         mTextView = (TextView) v.findViewById(R.id.mapMarkerInfo);
 
@@ -262,6 +262,7 @@ public class MapFragment extends Fragment {
             }
         });
 
+        if (eventID != null && eventID != "") {
             if (settings.isShowLifeStoryLines())
                 drawLifeStoryLines(eventID, settings.getLifeStoryLinesColor());
             else
@@ -274,7 +275,7 @@ public class MapFragment extends Fragment {
 
             if (settings.isShowSpouseLines())
                 drawSpouseLines(eventID, settings.getSpouseLinesColor());
-
+        }
 
     }
 
@@ -322,8 +323,21 @@ public class MapFragment extends Fragment {
 
     void drawAllMarkers()
     {
+        Settings settings = Settings.getInstance();
         FamilyInfo familyInfo = FamilyInfo.getInstance();
-        Event[] events = familyInfo.getEvents();
+
+        //remove now filtered event markers
+        Set<Marker> markers = settings.getMarkers();
+        for (Marker m : markers)
+        {
+            Event event = (Event) m.getTag();
+            if (!familyInfo.passesAllFilters(event))
+            {
+                m.remove();
+            }
+        }
+        markers.clear();
+        Event[] events = familyInfo.getFilteredEvents();
         for (Event e : events)
         {
             LatLng latLng = new LatLng(Double.parseDouble(e.getLatitude()), Double.parseDouble(e.getLongitude()));
@@ -333,12 +347,28 @@ public class MapFragment extends Fragment {
 
             Marker marker = mGoogleMap.addMarker(markerOptions);
             marker.setTag(e); //associate the event with the marker
+            settings.addMarker(marker);
 
-            if (e.getEventID().equals(eventID))
-            {
+            if (e.getEventID().equals(eventID)) {
                 marker.showInfoWindow();
+
             }
         }
+        //remove unused markers
+
+//        List<Marker> toRemove = new ArrayList<>();
+//        for (Marker m : markers)
+//        {
+//            Event event = (Event) m.getTag();
+//            if (!familyInfo.passesAllFilters(event))
+//            {
+//                m.remove();
+//            }
+//        }
+//        for (Marker m : toRemove)
+//        {
+//            markers.remove(m);
+//        }
     }
 
     //returns the appropriate color for the event marker
@@ -401,7 +431,7 @@ public class MapFragment extends Fragment {
         {
             Person spouse = familyInfo.getPersonFromID(person.getSpouse());
             Event[] spouseEvents = familyInfo.getEventsOfPerson(spouse.getPersonID());
-            if (spouseEvents != null && spouseEvents[0] != null)
+            if (spouseEvents != null && spouseEvents.length > 0 &&spouseEvents[0] != null)
             {
                 LatLng spouseLocation = new LatLng(Double.parseDouble(spouseEvents[0].getLatitude()), Double.parseDouble(spouseEvents[0].getLongitude()));
                 LatLng personLocation = new LatLng(Double.parseDouble(eventSelected.getLatitude()), Double.parseDouble(eventSelected.getLongitude()));
@@ -427,7 +457,7 @@ public class MapFragment extends Fragment {
         if (father != null)
             fatherEvents = familyInfo.getEventsOfPerson(father.getPersonID());
 
-        if (fatherEvents != null && fatherEvents[0] != null) {
+        if (fatherEvents != null && fatherEvents.length > 0 && fatherEvents[0] != null) {
             LatLng fatherPos = new LatLng(Double.parseDouble(fatherEvents[0].getLatitude()), Double.parseDouble(fatherEvents[0].getLongitude()));
             drawLine(curPosition, fatherPos, width, lineColor, settings.getFamilyTreeLines()); //draw line connecting current person and their father
         }
@@ -440,7 +470,7 @@ public class MapFragment extends Fragment {
         if (mother != null)
             motherEvents = familyInfo.getEventsOfPerson(mother.getPersonID());
 
-        if (motherEvents != null && motherEvents[0] != null)
+        if (motherEvents != null && motherEvents.length > 0 && motherEvents[0] != null)
         {
             LatLng motherPos = new LatLng(Double.parseDouble(motherEvents[0].getLatitude()), Double.parseDouble(motherEvents[0].getLongitude()));
             drawLine(curPosition, motherPos, width, lineColor, settings.getFamilyTreeLines()); //draw line connecting current person and their mother
@@ -448,9 +478,9 @@ public class MapFragment extends Fragment {
 
         //recurse for parents
         int nextWidth = (width / 2 > 0) ? (width / 2) : 1;
-        if (father != null && fatherEvents != null && fatherEvents[0] != null)
+        if (father != null && fatherEvents != null && fatherEvents.length > 0 && fatherEvents[0] != null)
             familyTreeRecurse(father, fatherEvents[0], nextWidth);
-        if (mother != null && motherEvents != null && motherEvents[0] != null)
+        if (mother != null && motherEvents != null && motherEvents.length > 0 && motherEvents[0] != null)
             familyTreeRecurse(mother, motherEvents[0], nextWidth);
     }
 

@@ -42,6 +42,10 @@ public class UserInfo
 
     public void setUserName(String userName) {
         this.userName = userName;
+        //since this is the last piece of data stashed, init the side lists
+        FamilyInfo familyInfo = FamilyInfo.getInstance();
+        familyInfo.initFatherSideEvents();
+        familyInfo.initMotherSideEvents();
     }
 
     public String getPersonID() {

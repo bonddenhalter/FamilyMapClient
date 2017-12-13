@@ -7,9 +7,367 @@
     android:layout_height="match_parent"
     tools:context="com.bond.android.familymap.FilterActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Filter Activity"/>
+    <LinearLayout
+        android:layout_width="368dp"
+        android:layout_height="495dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:orientation="vertical">
+
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:text="Baptism Events"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FILTER BY BAPTISM EVENTS"
+                    android:textSize="12dp"/>
+
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/baptism_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"/>
+
+        </GridLayout>
+
+        <View android:background="@color/BLACK"
+              android:layout_height="1dp"
+              android:layout_width="match_parent"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:text="Birth Events"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FILTER BY BIRTH EVENTS"
+                    android:textSize="12dp"/>
+
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/birth_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"/>
+
+        </GridLayout>
+
+        <View android:background="@color/BLACK"
+              android:layout_height="1dp"
+              android:layout_width="match_parent"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:text="Census Events"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FILTER BY CENSUS EVENTS"
+                    android:textSize="12dp"/>
+
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/census_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"/>
+
+        </GridLayout>
+
+        <View android:background="@color/BLACK"
+              android:layout_height="1dp"
+              android:layout_width="match_parent"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:text="Christening Events"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FILTER BY CHRISTENING EVENTS"
+                    android:textSize="12dp"/>
+
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/christening_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"/>
+
+        </GridLayout>
+
+        <View android:background="@color/BLACK"
+              android:layout_height="1dp"
+              android:layout_width="match_parent"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:text="Death Events"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FILTER BY DEATH EVENTS"
+                    android:textSize="12dp"/>
+
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/death_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"/>
+
+        </GridLayout>
+
+        <View android:background="@color/BLACK"
+              android:layout_height="1dp"
+              android:layout_width="match_parent"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:text="Marriage Events"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FILTER BY MARRIAGE EVENTS"
+                    android:textSize="12dp"/>
+
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/marriage_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"/>
+
+        </GridLayout>
+
+        <View android:background="@color/BLACK"
+              android:layout_height="1dp"
+              android:layout_width="match_parent"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:text="Father's Side"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FILTER BY FATHER'S SIDE OF FAMILY"
+                    android:textSize="12dp"/>
+
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/father_side_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"/>
+
+        </GridLayout>
+
+        <View android:background="@color/BLACK"
+              android:layout_height="1dp"
+              android:layout_width="match_parent"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:text="Mother's Side"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FILTER BY MOTHER'S SIDE OF FAMILY"
+                    android:textSize="12dp"/>
+
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/mother_side_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"/>
+
+        </GridLayout>
+
+        <View android:background="@color/BLACK"
+              android:layout_height="1dp"
+              android:layout_width="match_parent"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:text="Male Events"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FILTER EVENTS BASED ON GENDER"
+                    android:textSize="12dp"/>
+
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/male_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"/>
+
+        </GridLayout>
+
+        <View android:background="@color/BLACK"
+              android:layout_height="1dp"
+              android:layout_width="match_parent"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:text="Female Events"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FILTER EVENTS BASED ON GENDER"
+                    android:textSize="12dp"/>
+
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/female_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"/>
+
+        </GridLayout>
+
+        <View android:background="@color/BLACK"
+              android:layout_height="1dp"
+              android:layout_width="match_parent"/>
+
+
+    </LinearLayout>
+
+
 
 </android.support.constraint.ConstraintLayout>

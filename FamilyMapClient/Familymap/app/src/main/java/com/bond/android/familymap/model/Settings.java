@@ -3,10 +3,13 @@ package com.bond.android.familymap.model;
 import android.util.Log;
 
 import com.bond.android.familymap.R;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,12 +46,11 @@ public class Settings {
     private Set<Polyline> spouseLines;
 
     private Event lastEventSelected; //updated when map fragment paused
-
-
-
     private boolean mapFragInMain;
+    Set<Marker> markers;
 
     private static Settings instance = null;
+
 
     //SINGLETON
     private Settings()
@@ -66,7 +68,7 @@ public class Settings {
         familyTreeLines = new HashSet<>();
         spouseLines = new HashSet<>();
 
-
+        markers = new HashSet<>();
     }
 
     public static Settings getInstance()
@@ -74,6 +76,14 @@ public class Settings {
         if (instance == null)
             instance = new Settings();
         return instance;
+    }
+
+    public void logOut()
+    {
+        lifelines.clear();
+        familyTreeLines.clear();
+        spouseLines.clear();
+        lastEventSelected = null;
     }
 
     public Set<Polyline> getSpouseLines() {
@@ -256,5 +266,19 @@ public class Settings {
 
         }
     }
+
+    public Set<Marker> getMarkers() {
+        return markers;
+    }
+
+    public void setMarkers(Set<Marker> markers) {
+        this.markers = markers;
+    }
+
+    public void addMarker(Marker m)
+    {
+        markers.add(m);
+    }
+
 
 }

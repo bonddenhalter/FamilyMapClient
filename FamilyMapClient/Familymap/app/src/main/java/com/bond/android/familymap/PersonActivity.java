@@ -41,10 +41,15 @@ public class PersonActivity extends AppCompatActivity {
     private AdapterFamily mAdapterFamily;
     private Event[] mEvents;
     private List<FamilyMember> mFamilyMembers;
+    private TextView mEventListHead;
+    private TextView mFamilyListHead;
     Drawable icon;
     Drawable maleIcon;
     Drawable femaleIcon;
     Activity thisActivity;
+
+    private boolean eventListOpen = false;
+    private boolean familyListOpen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +60,7 @@ public class PersonActivity extends AppCompatActivity {
         FamilyInfo familyInfo = FamilyInfo.getInstance();
         mPerson = familyInfo.getPersonFromID(personID);
         mEvents = familyInfo.getEventsOfPerson(personID);
-        String fullName = mPerson.getFirstName() + " " + mPerson.getLastName();
+        final String fullName = mPerson.getFirstName() + " " + mPerson.getLastName();
 
         //get family members
         mFamilyMembers = generateFamilyList(personID);
@@ -71,18 +76,50 @@ public class PersonActivity extends AppCompatActivity {
 
         mEventList = (RecyclerView) findViewById(R.id.PA_event_list);
         mEventList.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new Adapter(this, mEvents, fullName);
+        mAdapter = new Adapter(this, new Event[0], fullName);
         mEventList.setAdapter(mAdapter);
 
         mFamilyList = (RecyclerView) findViewById(R.id.PA_family_list);
         mFamilyList.setLayoutManager(new LinearLayoutManager(this));
-        mAdapterFamily = new AdapterFamily(this, mFamilyMembers);
+        mAdapterFamily = new AdapterFamily(this, new ArrayList<FamilyMember>());
         mFamilyList.setAdapter(mAdapterFamily);
 
         icon = new IconDrawable(this, FontAwesomeIcons.fa_map_marker).colorRes(R.color.colorPrimaryDark).sizeDp(25);
         maleIcon = new IconDrawable(this, FontAwesomeIcons.fa_male).colorRes(R.color.BLUE).sizeDp(25);
         femaleIcon = new IconDrawable(this, FontAwesomeIcons.fa_female).colorRes(R.color.PINK).sizeDp(25);
         thisActivity = this;
+
+        mEventListHead = (TextView) findViewById(R.id.life_events_list_head);
+        mEventListHead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                eventListOpen = !eventListOpen;
+                if (eventListOpen)
+                {
+                    mAdapter = new Adapter(PersonActivity.this, mEvents, fullName);
+                }
+                else
+                {
+                    mAdapter = new Adapter(PersonActivity.this, new Event[0], fullName);
+                }
+
+                mEventList.setAdapter(mAdapter);
+            }
+        });
+
+        mFamilyListHead = (TextView) findViewById(R.id.family_list_head);
+        mFamilyListHead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                familyListOpen = !familyListOpen;
+                if(familyListOpen)
+                    mAdapterFamily = new AdapterFamily(PersonActivity.this, mFamilyMembers);
+                else
+                    mAdapterFamily = new AdapterFamily(PersonActivity.this, new ArrayList<FamilyMember>());
+
+                mFamilyList.setAdapter(mAdapterFamily);
+            }
+        });
 
     }
 

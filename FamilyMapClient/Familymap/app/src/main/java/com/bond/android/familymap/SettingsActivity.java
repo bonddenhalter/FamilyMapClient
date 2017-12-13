@@ -132,12 +132,6 @@ public class SettingsActivity extends AppCompatActivity {
                 ResyncRequestTask resyncTask = new ResyncRequestTask();
                 resyncTask.execute();
 
-                //start async task
-                //in async task:
-
-                //wipe family data, reset loadSuccessful flags
-                //request family data
-                //check flags for success
             }
         });
 
@@ -147,8 +141,10 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 UserInfo userInfo = UserInfo.getInstance();
                 userInfo.logOut(); //delete user data
+                settings.logOut();
                 settings.setMainLoadMapFragOnCreate(false); //go to login screen
-                startActivity(new Intent(SettingsActivity.this, MainActivity.class));
+                Intent intent = new Intent(SettingsActivity.this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
             }
         });
     }
